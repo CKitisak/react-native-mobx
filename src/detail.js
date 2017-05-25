@@ -1,17 +1,21 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { View, Text } from 'react-native'
 import styles from './styles'
 
-class App extends Component {
+class Detail extends Component {
+  static navigationOptions = {
+    title: 'Detail'
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text>
-          App
+          Detail
         </Text>
       </View>
     )
   }
 }
 
-module.exports = App;
+export default Detail
