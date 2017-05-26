@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, FlatList, TouchableHighlight, StyleSheet } from 'react-native'
+import { View, Text, TextInput, ScrollView, TouchableHighlight, StyleSheet } from 'react-native'
 import { observer } from 'mobx-react/native'
 import appStyles from './styles'
 
@@ -15,6 +15,10 @@ class Home extends Component {
       showInput: false,
       text: ''
     }
+  }
+
+  _updateFilter (text) {
+    this.props.screenProps.filter = text
   }
 
   _toggleInput () {
@@ -40,43 +44,52 @@ class Home extends Component {
 
   render() {
     const { showInput, text } = this.state
-    const { list } = this.props.screenProps
+    const { list, filteredList, filter } = this.props.screenProps
     const { navigate } = this.props.navigation
+
+    const itemList = filteredList.map(item => (
+      <View key={item.index} style={_styles.list}>
+        <Text
+          style={_styles.listName}
+          onPress={() => navigate('Detail', item)}
+        >
+          {item.name}
+        </Text>
+
+        <Text
+          style={_styles.listRemoveText}
+          onPress={() => this._removeListItem(item)}
+        >
+          Remove
+        </Text>
+      </View>
+    ))
+
+    const noItemList = () => (
+      <Text style={_styles.noListText}>
+        No List, Add List To Get Started
+      </Text>
+    )
 
     return (
       <View style={appStyles.container}>
-        <View style={_styles.listBox}>
-          {list.length === 0 &&
-            <Text style={_styles.noListText}>
-              No List, Add List To Get Started
-            </Text>
-          }
-
-          {list.length !== 0 &&
-            <FlatList
-              data={list}
-              extraData={list}
-              keyExtractor={item => item.index}
-              renderItem={({item}) => (
-                <View style={_styles.list}>
-                  <Text
-                    style={_styles.listName}
-                    onPress={() => navigate('Detail', item)}
-                  >
-                    {item.name.toUpperCase()}
-                  </Text>
-
-                  <Text
-                    style={_styles.listRemoveText}
-                    onPress={() => this._removeListItem(item)}
-                  >
-                    Remove
-                  </Text>
-                </View>
-              )}
-            />
-          }
+        <View>
+          <TextInput
+            style={_styles.inputSearch}
+            onChangeText={(newVal) => this._updateFilter(newVal)}
+            value={filter}
+            placeholder='search...'
+            placeholderTextColor='#fff'
+            underlineColorAndroid='transparent'
+          />
         </View>
+
+        <ScrollView style={_styles.listBox}>
+          {list.length === 0
+            ? noItemList
+            : itemList
+          }
+        </ScrollView>
 
         <View>
           <TouchableHighlight
@@ -113,6 +126,13 @@ class Home extends Component {
 }
 
 const _styles = StyleSheet.create({
+  inputSearch: {
+    backgroundColor: '#888',
+    color: '#fff',
+    height: 60,
+    fontSize: 18,
+    padding: 20
+  },
   listBox: {
     flex: 1
   },
@@ -150,6 +170,7 @@ const _styles = StyleSheet.create({
   },
   inputItem: {
     height: 60,
+    fontSize: 18,
     padding: 20,
     backgroundColor: '#eee'
   }

@@ -1,9 +1,14 @@
-import { observable } from 'mobx'
+import { autorun, computed, observable } from 'mobx'
 
 let index = 0
 
 class ObservableListStore {
   @observable list = []
+  @observable filter = ''
+  @computed get filteredList () {
+    var matcherFilter = new RegExp(this.filter, 'i')
+    return this.list.filter(item => !this.filter || matcherFilter.test(item.name))
+  }
 
   addListItem (item) {
     this.list.push({
@@ -29,7 +34,7 @@ class ObservableListStore {
   }
 }
 
-const observableListStore = new ObservableListStore()
+const observableListStore = new ObservableListStore
 // demo itemList
 observableListStore.addListItem('Lorem Ipsum')
 observableListStore.addListItem('Testing 2')
@@ -39,5 +44,10 @@ observableListStore.addItem({index: 0}, 'Ipsum')
 observableListStore.addItem({index: 1}, 'step 1')
 observableListStore.addItem({index: 1}, 'step 2')
 observableListStore.addItem({index: 1}, 'step 3')
+
+autorun(() => {
+  console.log(observableListStore.list)
+  console.log(observableListStore.filter)
+})
 
 export default observableListStore
