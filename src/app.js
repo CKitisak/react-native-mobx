@@ -3,11 +3,11 @@ import { StackNavigator } from 'react-navigation'
 import ListStore from './mobx/listStore'
 
 import Home from './home'
-// import Detail from './detail'
+import Detail from './detail'
 
 const Navigator = StackNavigator({
   Home: { screen: Home },
-  // Detail: { screen: Detail }
+  Detail: { screen: Detail }
 })
 
 class App extends Component {

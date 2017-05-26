@@ -30,5 +30,14 @@ class ObservableListStore {
 }
 
 const observableListStore = new ObservableListStore()
+// demo itemList
+observableListStore.addListItem('Lorem Ipsum')
+observableListStore.addListItem('Testing 2')
+// demo items in itemList
+observableListStore.addItem({index: 0}, 'Lorem')
+observableListStore.addItem({index: 0}, 'Ipsum')
+observableListStore.addItem({index: 1}, 'step 1')
+observableListStore.addItem({index: 1}, 'step 2')
+observableListStore.addItem({index: 1}, 'step 3')
 
 export default observableListStore

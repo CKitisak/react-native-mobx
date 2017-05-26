@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, TouchableHighlight } from 'react-native'
+import { View, Text, TextInput, FlatList, TouchableHighlight, StyleSheet } from 'react-native'
 import { observer } from 'mobx-react/native'
-import styles from './styles'
+import appStyles from './styles'
 
 @observer
 class Home extends Component {
   static navigationOptions = {
-    title: 'Home'
+    header: null
   }
 
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.state = {
       showInput: false,
       text: ''
@@ -38,76 +38,121 @@ class Home extends Component {
     this.props.screenProps.removeListItem(item)
   }
 
-  _addItemToList () {
-    console.log(this.props)
-  }
-
   render() {
-    let { showInput, text } = this.state
-    let { list } = this.props.screenProps
+    const { showInput, text } = this.state
+    const { list } = this.props.screenProps
+    const { navigate } = this.props.navigation
 
     return (
-      <View>
-        <View style={styles.headingText}>
-          <Text>
-            Item List
-          </Text>
-        </View>
-
-        <View style={styles.itemWraper}>
-          {list.map((item, index) => {
-            return (
-              <View key={index} style={styles.itemContainer}>
-                <Text
-                  style={styles.itemName}
-                  onPress={this._addItemToList.bind(this, item)}
-                >
-                  {item.name.toUpperCase()}
-                </Text>
-                <Text
-                  style={styles.itemRemoveText}
-                  onPress={this._removeListItem.bind(this, item)}
-                >
-                  Remove
-                </Text>
-              </View>
-            )
-          })}
-        </View>
-        {list.length === 0 &&
-          <View style={styles.noList}>
-            <Text style={styles.noListText}>
+      <View style={appStyles.container}>
+        <View style={_styles.listBox}>
+          {list.length === 0 &&
+            <Text style={_styles.noListText}>
               No List, Add List To Get Started
             </Text>
-          </View>
-        }
+          }
+
+          {list.length !== 0 &&
+            <FlatList
+              data={list}
+              extraData={list}
+              keyExtractor={item => item.index}
+              renderItem={({item}) => (
+                <View style={_styles.list}>
+                  <Text
+                    style={_styles.listName}
+                    onPress={() => navigate('Detail', item)}
+                  >
+                    {item.name.toUpperCase()}
+                  </Text>
+
+                  <Text
+                    style={_styles.listRemoveText}
+                    onPress={() => this._removeListItem(item)}
+                  >
+                    Remove
+                  </Text>
+                </View>
+              )}
+            />
+          }
+        </View>
 
         <View>
           <TouchableHighlight
             underlayColor='transparent'
-            style={styles.button}
-            onPress={text === ''
-              ? this._toggleInput.bind(this)
-              : this._addListItem.bind(this, text)
-            }
+            style={_styles.buttonNewList}
+            onPress={() => {
+              text === ''
+              ? this._toggleInput()
+              : this._addListItem(text)
+            }}
           >
-            <Text style={styles.buttonText}>
-              {(text === '' && !showInput) && '+ New List'}
-              {(text === '' && showInput) && '+ Close'}
-              {text !== '' && '+ Add New List Item'}
+            <Text style={_styles.buttonNewListText}>
+              {(text === '' && !showInput) && 'New List'}
+              {(text === '' && showInput) && 'Close'}
+              {text !== '' && 'Add List'}
             </Text>
           </TouchableHighlight>
-          {showInput &&
+        </View>
+
+        {showInput &&
+          <View>
             <TextInput
-              style={styles.input}
+              style={_styles.inputItem}
               onChangeText={(newVal) => this._updateText(newVal)}
               value={text}
+              placeholder='new list...'
+              underlineColorAndroid='transparent'
             />
-          }
-        </View>
+          </View>
+        }
       </View>
     )
   }
 }
+
+const _styles = StyleSheet.create({
+  listBox: {
+    flex: 1
+  },
+  list: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc'
+  },
+  listName: {
+    fontSize: 18,
+    flex: 4,
+    paddingVertical: 20,
+    paddingLeft: 20
+  },
+  listRemoveText: {
+    color: 'red',
+    flex: 1,
+    alignSelf: 'center'
+  },
+  noListText: {
+    color: '#ccc',
+    fontSize: 20,
+    padding: 20,
+    alignSelf: 'center'
+  },
+  buttonNewList: {
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#ccc'
+  },
+  buttonNewListText: {
+    fontSize: 20
+  },
+  inputItem: {
+    height: 60,
+    padding: 20,
+    backgroundColor: '#eee'
+  }
+})
 
 export default Home
