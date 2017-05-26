@@ -65,7 +65,7 @@ class Home extends Component {
       </View>
     ))
 
-    const noItemList = () => (
+    const noItemList = (
       <Text style={_styles.noListText}>
         No List, Add List To Get Started
       </Text>
@@ -95,11 +95,10 @@ class Home extends Component {
           <TouchableHighlight
             underlayColor='transparent'
             style={_styles.buttonNewList}
-            onPress={() => {
-              text === ''
+            onPress={() => text === ''
               ? this._toggleInput()
               : this._addListItem(text)
-            }}
+            }
           >
             <Text style={_styles.buttonNewListText}>
               {(text === '' && !showInput) && 'New List'}

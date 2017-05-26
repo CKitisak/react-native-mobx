@@ -32,32 +32,30 @@ class Detail extends Component {
   }
 
   render() {
-    let info = this.props.navigation.state.params
+    const info = this.props.navigation.state.params
+
+    const noItemList = (
+      <Text style={_styles.noItemText}>
+        No Item, Add Items To Get Started
+      </Text>
+    )
+
+    const itemList = info.items.map((item, index) => (
+      <View key={index} style={_styles.item}>
+        <Text
+          style={_styles.itemName}
+        >
+          • {item}
+        </Text>
+      </View>
+    ))
 
     return (
       <View style={appStyles.container}>
         <View style={_styles.itemsBox}>
-          {info.items.length === 0 &&
-            <Text style={_styles.noItemText}>
-              No Item, Add Items To Get Started
-            </Text>
-          }
-
-          {info.items.length !== 0 &&
-            <FlatList
-              data={info.items}
-              extraData={info.items}
-              keyExtractor={(item, index) => index}
-              renderItem={({item}) => (
-                <View style={_styles.item}>
-                  <Text
-                    style={_styles.itemName}
-                  >
-                    • {item.toUpperCase()}
-                  </Text>
-                </View>
-              )}
-            />
+          {(info.items.length === 0)
+            ? noItemList
+            : itemList
           }
         </View>
 
